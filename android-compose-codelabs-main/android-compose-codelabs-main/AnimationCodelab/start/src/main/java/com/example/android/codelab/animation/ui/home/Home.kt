@@ -399,6 +399,7 @@ private fun TopicRow(topic: String, expanded: Boolean, onClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
+                .animateContentSize()
         ) {
             Row {
                 Icon(
@@ -479,9 +480,53 @@ private fun HomeTabIndicator(
     tabPage: TabPage
 ) {
     // TODO 4: Animate these value changes.
-    val indicatorLeft = tabPositions[tabPage.ordinal].left
-    val indicatorRight = tabPositions[tabPage.ordinal].right
-    val color = if (tabPage == TabPage.Home) Purple700 else Green800
+    //val indicatorLeft = tabPositions[tabPage.ordinal].left
+    //val indicatorRight = tabPositions[tabPage.ordinal].right
+    //val color = if (tabPage == TabPage.Home) Purple700 else Green800
+
+    // Ch6 第一次修正的做法
+//    val transition = updateTransition(tabPage, label = "Tab indicator")      //注意,都要加 label
+//    val indicatorLeft by transition.animateDp(label = "") { page ->
+//        tabPositions[page.ordinal].left
+//    }
+//    val indicatorRight by transition.animateDp(label = "") { page ->
+//        tabPositions[page.ordinal].right
+//    }
+//    val color by transition.animateColor(label = "") { page ->
+//        if(page == TabPage.Home) Purple700 else Green800
+//    }
+
+    val transition = updateTransition(tabPage, label = "Tab indicator")
+    val indicatorLeft by transition.animateDp(
+        transitionSpec = {
+            if(TabPage.Home isTransitioningTo TabPage.Work) {
+                spring(stiffness = Spring.StiffnessVeryLow)
+            } else {
+                spring(stiffness = Spring.StiffnessMedium)
+            }
+        },
+        label = "Indicator left"
+    ) { page ->
+        tabPositions[page.ordinal].left
+    }
+    val indicatorRight by transition.animateDp(
+        transitionSpec = {
+            if(TabPage.Home isTransitioningTo TabPage.Work) {
+                spring(stiffness = Spring.StiffnessMedium)
+            } else {
+                spring(stiffness = Spring.StiffnessVeryLow)
+            }
+        },
+        label = "Indicator right"
+    ) { page ->
+        tabPositions[page.ordinal].right
+    }
+    val color by transition.animateColor(
+        label = "Border color"
+    ) { page ->
+        if(page == TabPage.Home) Purple700 else Green800
+    }
+
     Box(
         Modifier
             .fillMaxSize()
