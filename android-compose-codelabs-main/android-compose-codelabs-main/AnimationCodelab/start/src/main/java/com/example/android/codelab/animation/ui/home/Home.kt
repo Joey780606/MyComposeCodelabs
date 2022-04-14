@@ -16,6 +16,23 @@
 
 package com.example.android.codelab.animation.ui.home
 
+/*
+   Learner: Joey yang
+   Use skill: Ln
+    stringArrayResource
+    remember
+    mutableStateOf
+    mutableStateListOf
+    LaunchedEffect
+    rememberLazyListState()
+    animateColorAsState
+    rememberCoroutineScope
+    Scaffold
+    LazyColumn
+
+   看到 Home.kt 的 ln 223
+ */
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColor
@@ -145,7 +162,7 @@ fun Home() {
     var weatherLoading by remember { mutableStateOf(false) }
 
     // Holds all the tasks currently shown on the task list.
-    val tasks = remember { mutableStateListOf(*allTasks) }
+    val tasks = remember { mutableStateListOf(*allTasks) }  //重要,要有 * (原因不明)
 
     // Holds the topic that is currently expanded to show its body.
     var expandedTopic by remember { mutableStateOf<String?>(null) }
@@ -187,18 +204,18 @@ fun Home() {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
-            HomeTabBar(
+            HomeTabBar( //重要
                 backgroundColor = backgroundColor,
                 tabPage = tabPage,
-                onTabSelected = { tabPage = it }
+                onTabSelected = { tabPage = it } //重要
             )
         },
         backgroundColor = backgroundColor,
         floatingActionButton = {
             HomeFloatingActionButton(
-                extended = lazyListState.isScrollingUp(),
+                extended = lazyListState.isScrollingUp(),   //重要,這是一個function
                 onClick = {
-                    coroutineScope.launch {
+                    coroutineScope.launch { //重要,做 Coroutine.
                         showEditMessage()
                     }
                 }

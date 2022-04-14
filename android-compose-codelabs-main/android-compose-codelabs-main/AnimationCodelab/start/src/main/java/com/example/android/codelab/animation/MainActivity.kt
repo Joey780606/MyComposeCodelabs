@@ -16,6 +16,10 @@
 
 package com.example.android.codelab.animation
 
+/*
+   Learner: Joey yang
+   Use skill: Please check Home.kt
+ */
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
