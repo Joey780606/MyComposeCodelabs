@@ -22,13 +22,22 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.compose.rally.data.UserData
+import com.example.compose.rally.ui.accounts.AccountsBody
+import com.example.compose.rally.ui.bills.BillsBody
 import com.example.compose.rally.ui.components.RallyTabRow
+import com.example.compose.rally.ui.overview.OverviewBody
 import com.example.compose.rally.ui.theme.RallyTheme
 
 /**
@@ -48,22 +57,53 @@ class RallyActivity : ComponentActivity() {
 fun RallyApp() {
     RallyTheme {
         val allScreens = RallyScreen.values().toList()
-        var currentScreen by rememberSaveable { mutableStateOf(RallyScreen.Overview) }
+
+        //var currentScreen by rememberSaveable { mutableStateOf(RallyScreen.Overview) }
+        // Ch3,這樣改變,表示收縮(collapsing)和擴展選取的items是不會工作.  Navigation為你抓住back stack,且能與目前的back stack entry 以State提供給你.
+
+        val navController = rememberNavController() //Ch3 Create NavController
+        val backStackEntry = navController.currentBackStackEntryAsState()   //Ch3 join backstackEngry
+        val currentScreen = RallyScreen.fromRoute(
+            backStackEntry.value?.destination?.route
+        )
         Scaffold(
             topBar = {
                 RallyTabRow(
                     allScreens = allScreens,
-                    onTabSelected = { screen -> currentScreen = screen },
+                    //onTabSelected = { screen -> currentScreen = screen },
+                    onTabSelected = { screen -> navController.navigate(screen.name) },  //Ch3 modify
                     currentScreen = currentScreen
                 )
             }
         ) { innerPadding ->
-            Box(Modifier.padding(innerPadding)) {
-                currentScreen.content(
-                    onScreenChange = { screen ->
-                        currentScreen = RallyScreen.valueOf(screen)
-                    }
-                )
+            //Box(Modifier.padding(innerPadding)) {
+            NavHost(    // Ch3, Use NavHost
+                navController = navController,
+                startDestination = RallyScreen.Overview.name,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+//                composable(RallyScreen.Overview.name) {     //重要, composable 的用法
+//                    Text(text = RallyScreen.Overview.name)
+//                }
+//                composable(RallyScreen.Accounts.name) {
+//                    Text(RallyScreen.Accounts.name)
+//                }
+//                composable(RallyScreen.Bills.name) {
+//                    Text(RallyScreen.Bills.name)
+//                }
+
+                composable(RallyScreen.Overview.name) { //Ch3 modify
+                    OverviewBody(
+                        onClickSeeAllAccounts = { navController.navigate(RallyScreen.Accounts.name) },
+                        onClickSeeAllBills = { navController.navigate(RallyScreen.Bills.name) }
+                    )
+                }
+                composable(RallyScreen.Accounts.name) {
+                    AccountsBody(accounts = UserData.accounts)
+                }
+                composable(RallyScreen.Bills.name) {
+                    BillsBody(bills = UserData.bills)
+                }
             }
         }
     }
