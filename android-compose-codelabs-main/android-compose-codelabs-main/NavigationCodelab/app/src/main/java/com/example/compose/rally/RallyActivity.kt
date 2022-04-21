@@ -82,11 +82,18 @@ fun RallyApp() {
             }
         ) { innerPadding ->
             //Box(Modifier.padding(innerPadding)) {
-            NavHost(    // Ch3, Use NavHost
-                navController = navController,
-                startDestination = RallyScreen.Overview.name,
-                modifier = Modifier.padding(innerPadding)
-            ) {
+            RallyNavHost(navController, Modifier.padding(innerPadding))
+        }
+    }
+}
+
+@Composable
+fun RallyNavHost(navController: NavHostController, navModifier: Modifier) {
+    NavHost(    // Ch3, Use NavHost
+        navController = navController,
+        startDestination = RallyScreen.Overview.name,
+        modifier = navModifier
+    ) {
 //                composable(RallyScreen.Overview.name) {     //重要, composable 的用法
 //                    Text(text = RallyScreen.Overview.name)
 //                }
@@ -97,48 +104,47 @@ fun RallyApp() {
 //                    Text(RallyScreen.Bills.name)
 //                }
 
-                composable( //Ch4 Step 1, Step 2: move to here and adjust content
-                    route = "$accountsName/{name}",
-                    arguments = listOf(
-                        navArgument("name") {
-                            // Make argument type safe
-                            type = NavType.StringType
-                        },
-                    ),
-                    deepLinks = listOf(navDeepLink {    //Ch5 Step 2, add navDeepLink
-                        uriPattern = "rally://$accountsName/{name}"
-                    })
-                ) { entry -> // 在 NavBackStackEntry 裡的變數,看 "name"
-                    val accountName = entry.arguments?.getString("name")
-                    val account = UserData.getAccount(accountName)
-                    SingleAccountBody(account = account)
-                }
+        composable( //Ch4 Step 1, Step 2: move to here and adjust content
+            route = "$accountsName/{name}",
+            arguments = listOf(
+                navArgument("name") {
+                    // Make argument type safe
+                    type = NavType.StringType
+                },
+            ),
+            deepLinks = listOf(navDeepLink {    //Ch5 Step 2, add navDeepLink
+                uriPattern = "rally://$accountsName/{name}"
+            })
+        ) { entry -> // 在 NavBackStackEntry 裡的變數,看 "name"
+            val accountName = entry.arguments?.getString("name")
+            val account = UserData.getAccount(accountName)
+            SingleAccountBody(account = account)
+        }
 
-                composable(RallyScreen.Overview.name) { //Ch3 modify
-                    OverviewBody(
-                        onClickSeeAllAccounts = { navController.navigate(RallyScreen.Accounts.name) },
-                        onClickSeeAllBills = { navController.navigate(RallyScreen.Bills.name) },
-                        // Ch4 Step 3
-                        onAccountClick = { name ->
-                            navigateToSingleAccount(navController, name)
-                        }
-                    )
+        composable(RallyScreen.Overview.name) { //Ch3 modify
+            OverviewBody(
+                onClickSeeAllAccounts = { navController.navigate(RallyScreen.Accounts.name) },
+                onClickSeeAllBills = { navController.navigate(RallyScreen.Bills.name) },
+                // Ch4 Step 3
+                onAccountClick = { name ->
+                    navigateToSingleAccount(navController, name)
                 }
-                composable(RallyScreen.Accounts.name) {
-                    AccountsBody(accounts = UserData.accounts) { name ->
-                        // Ch4 Step 3
-                        navigateToSingleAccount(
-                            navController = navController,
-                            accountName = name
-                        )
-                    }
-                }
-                composable(RallyScreen.Bills.name) {
-                    BillsBody(bills = UserData.bills)
-                }
+            )
+        }
+        composable(RallyScreen.Accounts.name) {
+            AccountsBody(accounts = UserData.accounts) { name ->
+                // Ch4 Step 3
+                navigateToSingleAccount(
+                    navController = navController,
+                    accountName = name
+                )
             }
         }
+        composable(RallyScreen.Bills.name) {
+            BillsBody(bills = UserData.bills)
+        }
     }
+
 }
 
 private fun navigateToSingleAccount(
