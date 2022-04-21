@@ -55,7 +55,7 @@ enum class RallyScreen(
     companion object {
         fun fromRoute(route: String?): RallyScreen =
             when (route?.substringBefore("/")) {
-                Accounts.name -> Accounts
+                Accounts.name -> Accounts   //重要: name可取得名稱, ordinary可取順序
                 Bills.name -> Bills
                 Overview.name -> Overview
                 null -> Overview
