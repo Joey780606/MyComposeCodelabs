@@ -40,16 +40,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
+    kotlinOptions { //Ch4 Compose need to join
         jvmTarget = "1.8"
         freeCompilerArgs = ['-Xjvm-default=compatibility']
         useIR = true
     }
-    buildFeatures {
+    buildFeatures { //Ch4 Compose need to join
         dataBinding true
         compose true
     }
-    composeOptions {
+    composeOptions { //Ch4 Compose need to join
         kotlinCompilerExtensionVersion rootProject.composeVersion
     }
     packagingOptions {
@@ -83,7 +83,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
 
-    // Compose
+    // Compose - the libraries that need to join
     implementation "androidx.compose.runtime:runtime:$rootProject.composeVersion"
     implementation "androidx.compose.ui:ui:$rootProject.composeVersion"
     implementation "androidx.compose.foundation:foundation:$rootProject.composeVersion"
