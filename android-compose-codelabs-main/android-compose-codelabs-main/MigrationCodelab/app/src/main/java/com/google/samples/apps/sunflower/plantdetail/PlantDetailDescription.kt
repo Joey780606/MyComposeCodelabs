@@ -20,7 +20,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
-@Composable
+@Composable     //Ch5 App already join it at first.
 fun PlantDetailDescription() {
     Surface {
         Text("Hello Compose")
